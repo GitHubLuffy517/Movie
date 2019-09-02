@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd  http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.lxd.movie.controller"/>
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!--注册一个multipartResolver，由中央控制器调用-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--默认字符-->
+        <property name="defaultEncoding" value="utf-8"/>
+        <!--单个文件上传大小-->
+        <property name="maxUploadSizePerFile" value="1048576000"/>
+        <!--是否保留原始路径名-->
+        <property name="preserveFilename" value="false"/>
+    </bean>
+    <!--静态资源映射 前面为前端请求的地址 后面为物理地址 两个*指该文件夹下所有文件及文件夹-->
+    <mvc:resources mapping="/resources/css/**" location="resources/css/"></mvc:resources>
+    <mvc:resources mapping="/resources/js/**" location="resources/js/"></mvc:resources>
+    <mvc:resources mapping="/resources/images/**" location="resources/images/"></mvc:resources>
+    <mvc:resources mapping="/resources/layui/**" location="resources/layui/"></mvc:resources>
+    <mvc:resources mapping="/resources/fonts/**" location="resources/fonts/"></mvc:resources>
+    <!--配置拦截器，实现未登录用户的拦截-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--只会拦截controller-->
+            <mvc:mapping path="/admin/**"/>
+            <bean class="com.lxd.movie.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/view/**"/>
+            <bean class="com.lxd.movie.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>
